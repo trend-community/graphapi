@@ -142,7 +142,17 @@ export class FacebookGraphAPI {
   constructor(
     private accessToken: string // long-lived or short-lived
   ) {}
-  private groupPath(): string {
+
+  private userGroupPath(): string {
+    return (
+      `${VERSION}/%s?` +
+      `${qs.stringify({
+        access_token: this.accessToken,
+      })}`
+    );
+  }
+
+  private userGroupsPath(): string {
     return (
       `${VERSION}/me/groups?` +
       `${qs.stringify({
@@ -187,8 +197,12 @@ export class FacebookGraphAPI {
     );
   }
 
+  getUserGroup(groupId: string): Promise<FacebookResponse<Group>> {
+    return graphRequest<Group>(util.format(this.userGroupPath(), groupId));
+  }
+
   getUserGroups(): Promise<FacebookResponse<FacebookGraphResult<Group>>> {
-    return graphRequest<FacebookGraphResult<Group>>(this.groupPath());
+    return graphRequest<FacebookGraphResult<Group>>(this.userGroupsPath());
   }
 
   getGroupsAppInstalledFor(

@@ -186,6 +186,33 @@ describe("facebook graph", function () {
     });
   });
 
+  describe("successful call to get user's group by id", function () {
+    let scope: nock.Scope;
+    beforeEach(function () {
+      scope = nock("https://graph.facebook.com")
+        .defaultReplyHeaders({
+          "x-app-usage": JSON.stringify({
+            call_count: 0,
+            total_time: 0,
+            total_cputime: 0,
+          }),
+        })
+        .get(/\/12345\?/)
+        .reply(200, { id: "12345" });
+    });
+
+    afterEach(function () {
+      nock.cleanAll();
+    });
+
+    test("should make a successfull call", async function () {
+      expect.assertions(2);
+      const result = await api.getUserGroup("12345");
+      expect(result.ok).toEqual(true);
+      expect(scope.isDone()).toEqual(true);
+    });
+  });
+
   describe("successful call to get user's groups", function () {
     let scope: nock.Scope;
     beforeEach(function () {
