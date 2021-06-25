@@ -147,6 +147,7 @@ export class FacebookGraphAPI {
     return (
       `${VERSION}/%s?` +
       `${qs.stringify({
+        fields: groupFields,
         access_token: this.accessToken,
       })}`
     );
