@@ -38,7 +38,7 @@ const reactions = [
   "reactions.type(CARE).limit(0).summary(total_count).as(reactions_care)",
 ].join(",");
 
-const groupField = [
+const group = [
   "id",
   "archived",
   "description",
@@ -52,10 +52,14 @@ const groupField = [
   "picture.fields(height,width,is_silhouette,url)",
   "privacy",
   "parent",
+];
+
+const groupField = [
+  ...group,
 ].join(",");
 
 const groupFields = [
-  ...groupField,
+  ...group,
   "administrator",
 ].join(",");
 
@@ -151,7 +155,7 @@ export class FacebookGraphAPI {
     return (
       `${VERSION}/%s?` +
       `${qs.stringify({
-        fields: groupFields,
+        fields: groupField,
         access_token: this.accessToken,
       })}`
     );
