@@ -1,55 +1,55 @@
-import nock from 'nock';
+import nock from "nock";
 
-import { FacebookGraphAPI, login } from '../index';
+import { FacebookGraphAPI, login } from "../index";
 
-beforeAll(function() {
+beforeAll(function () {
   nock.disableNetConnect();
 });
 
-describe('facebook login', function() {
-  describe('user access token', function() {
+describe("facebook login", function () {
+  describe("user access token", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .get(/\/oauth\/access_token\?/)
-        .reply(200, { access_token: '', token_type: '', expires_in: 0 });
+        .reply(200, { access_token: "", token_type: "", expires_in: 0 });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should login the user with application info and user access token', async function() {
+    test("should login the user with application info and user access token", async function () {
       expect.assertions(2);
       const result = await login({
-        grant_type: 'fb_exchange_token',
-        client_id: 'appId',
-        client_secret: 'appSecret',
-        fb_exchange_token: 'userAccessToken',
+        grant_type: "fb_exchange_token",
+        client_id: "appId",
+        client_secret: "appSecret",
+        fb_exchange_token: "userAccessToken",
       });
       expect(result.ok).toEqual(true);
       expect(scope.isDone()).toEqual(true);
     });
   });
 
-  describe('app access token', function() {
+  describe("app access token", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .get(/\/oauth\/access_token\?/)
-        .reply(200, { access_token: '', token_type: '' });
+        .reply(200, { access_token: "", token_type: "" });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should login the user with application info and user access token', async function() {
+    test("should login the user with application info and user access token", async function () {
       expect.assertions(2);
       const result = await login({
-        grant_type: 'client_credentials',
-        client_id: 'appId',
-        client_secret: 'appSecret',
+        grant_type: "client_credentials",
+        client_id: "appId",
+        client_secret: "appSecret",
       });
       expect(result.ok).toEqual(true);
       expect(scope.isDone()).toEqual(true);
@@ -57,138 +57,155 @@ describe('facebook login', function() {
   });
 });
 
-describe('facebook graph', function() {
+describe("facebook graph", function () {
   let api: FacebookGraphAPI;
 
-  beforeAll(function() {
-    api = new FacebookGraphAPI('secretAccessToken');
+  beforeAll(function () {
+    api = new FacebookGraphAPI("secretAccessToken");
   });
 
-  describe('successful call to get node feed, node = \'group\'', function () {
+  describe("successful call to get node feed, node = 'group'", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .defaultReplyHeaders({
-          'x-app-usage': JSON.stringify({call_count:0, total_time:0, total_cputime: 0}),
+          "x-app-usage": JSON.stringify({
+            call_count: 0,
+            total_time: 0,
+            total_cputime: 0,
+          }),
         })
         .get(/\/1\/feed\?/)
         .reply(200, { data: [], paging: {} });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should make a successfull call', async function() {
+    test("should make a successfull call", async function () {
       expect.assertions(2);
-      const result = await api.getNodeFeed('1', 'Group');
+      const result = await api.getNodeFeed("1", "Group");
       expect(result.ok).toEqual(true);
       expect(scope.isDone()).toEqual(true);
     });
   });
 
-  describe('error call to get node feed, node = \'group\'', function () {
+  describe("error call to get node feed, node = 'group'", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .get(/\/1\/feed\?/)
         .reply(400, { error: {} });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should make an error call', async function() {
+    test("should make an error call", async function () {
       expect.assertions(2);
-      const result = await api.getNodeFeed('1', 'Group');
+      const result = await api.getNodeFeed("1", "Group");
       expect(result.ok).toEqual(false);
       expect(scope.isDone()).toEqual(true);
     });
   });
 
-  describe('get error when problem with underlying req for get node feed, node = \'group\'', function () {
+  describe("get error when problem with underlying req for get node feed, node = 'group'", function () {
     beforeEach(function () {
-      nock('https://graph.facebook.com')
+      nock("https://graph.facebook.com")
         .get(/\/1\/feed\?/)
-        .replyWithError('error making request')
+        .replyWithError("error making request");
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should make an error call', async function() {
+    test("should make an error call", async function () {
       expect.assertions(1);
-      return expect(api.getNodeFeed('1', 'Group'))
-        .rejects
-        .toThrowError('error making request');
+      return expect(api.getNodeFeed("1", "Group")).rejects.toThrowError(
+        "error making request"
+      );
     });
   });
 
-  describe('successful call to get node comments', function () {
+  describe("successful call to get node comments", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .defaultReplyHeaders({
-          'x-app-usage': JSON.stringify({call_count:0, total_time:0, total_cputime: 0}),
+          "x-app-usage": JSON.stringify({
+            call_count: 0,
+            total_time: 0,
+            total_cputime: 0,
+          }),
         })
         .get(/\/1\/comments\?/)
         .reply(200, { data: [], paging: {} });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should make a successfull call', async function() {
+    test("should make a successfull call", async function () {
       expect.assertions(2);
-      const result = await api.getNodeComments('1');
+      const result = await api.getNodeComments("1");
       expect(result.ok).toEqual(true);
       expect(scope.isDone()).toEqual(true);
     });
   });
 
-  describe('successful call to get next page of results', function () {
+  describe("successful call to get next page of results", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .defaultReplyHeaders({
-          'x-app-usage': JSON.stringify({call_count:0, total_time:0, total_cputime: 0}),
+          "x-app-usage": JSON.stringify({
+            call_count: 0,
+            total_time: 0,
+            total_cputime: 0,
+          }),
         })
         .get(/\/1\/feed\?/)
         .reply(200, { data: [], paging: {} });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should make a successfull call', async function() {
+    test("should make a successfull call", async function () {
       expect.assertions(2);
-      const url = 'https://graph.facebook.com/v10.0/1/feed?fields=id%2Ccreated_time%2Cupdated_time%2Cpermalink_url%2Cfull_picture%2Ctype%2Cname%2Cmessage%2Clink%2Cshares%2Cstory%2Creactions.fields(id%2Ctype).summary(true)%2Ccomments.limit(1).fields(id).summary(true).filter(stream)&limit=50&access_token=secretAccessToken';
+      const url =
+        "https://graph.facebook.com/v10.0/1/feed?fields=id%2Ccreated_time%2Cupdated_time%2Cpermalink_url%2Cfull_picture%2Ctype%2Cname%2Cmessage%2Clink%2Cshares%2Cstory%2Creactions.fields(id%2Ctype).summary(true)%2Ccomments.limit(1).fields(id).summary(true).filter(stream)&limit=50&access_token=secretAccessToken";
       const result = await api.getNextPage(url);
       expect(result.ok).toEqual(true);
       expect(scope.isDone()).toEqual(true);
     });
   });
 
-  describe('successful call to get user\'s groups', function () {
+  describe("successful call to get user's groups", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .defaultReplyHeaders({
-          'x-app-usage': JSON.stringify({call_count:0, total_time:0, total_cputime: 0}),
+          "x-app-usage": JSON.stringify({
+            call_count: 0,
+            total_time: 0,
+            total_cputime: 0,
+          }),
         })
         .get(/\/me\/groups\?/)
         .reply(200, { data: [], paging: {} });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should make a successfull call', async function() {
+    test("should make a successfull call", async function () {
       expect.assertions(2);
       const result = await api.getUserGroups();
       expect(result.ok).toEqual(true);
@@ -196,24 +213,28 @@ describe('facebook graph', function() {
     });
   });
 
-  describe('successful call to get groups app is installed for', function () {
+  describe("successful call to get groups app is installed for", function () {
     let scope: nock.Scope;
     beforeEach(function () {
-      scope = nock('https://graph.facebook.com')
+      scope = nock("https://graph.facebook.com")
         .defaultReplyHeaders({
-          'x-app-usage': JSON.stringify({call_count:0, total_time:0, total_cputime: 0}),
+          "x-app-usage": JSON.stringify({
+            call_count: 0,
+            total_time: 0,
+            total_cputime: 0,
+          }),
         })
         .get(/\/appId\/app_installed_groups\?/)
         .reply(200, { data: [], paging: {} });
     });
 
-    afterEach(function() {
+    afterEach(function () {
       nock.cleanAll();
     });
 
-    test('should make a successfull call', async function() {
+    test("should make a successfull call", async function () {
       expect.assertions(2);
-      const result = await api.getGroupsAppInstalledFor('appId');
+      const result = await api.getGroupsAppInstalledFor("appId");
       expect(result.ok).toEqual(true);
       expect(scope.isDone()).toEqual(true);
     });

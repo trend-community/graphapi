@@ -1,6 +1,4 @@
-export type NodeType =
-  | 'Group'
-  | 'Post';
+export type NodeType = "Group" | "Post";
 
 /**
  * retry errors:
@@ -17,18 +15,20 @@ export type NodeType =
  * Access token has expired (code = 190)
  */
 
- export type LoginParams =
- | { // user access token
-     grant_type: 'fb_exchange_token',
-     client_id: string,
-     client_secret: string,
-     fb_exchange_token: string
-   }
- | { // app access token
-     grant_type: 'client_credentials',
-     client_id: string,
-     client_secret: string
-   };
+export type LoginParams =
+  | {
+      // user access token
+      grant_type: "fb_exchange_token";
+      client_id: string;
+      client_secret: string;
+      fb_exchange_token: string;
+    }
+  | {
+      // app access token
+      grant_type: "client_credentials";
+      client_id: string;
+      client_secret: string;
+    };
 
 export interface FacebookError {
   error: {
@@ -44,7 +44,7 @@ export interface FacebookLimits {
   call_count: number;
   total_time: number;
   total_cputime: number;
-};
+}
 
 export interface FacebookLoginResult {
   access_token: string;
@@ -130,7 +130,7 @@ export interface Post extends Reactions {
   shares?: any;
   story?: string;
   comments?: {
-    data: Array<{id: string}>;
+    data: Array<{ id: string }>;
     paging: any; // ignore, query comments in another route
     summary: {
       order: string;
@@ -164,7 +164,7 @@ export interface Comment extends Reactions {
   parent?: {
     id: string;
     created_time: string;
-  }
+  };
 }
 
 export interface FacebookGraphResult<A> {
@@ -180,18 +180,18 @@ export interface FacebookGraphResult<A> {
 }
 
 export type FacebookResponse<A> =
-  | { ok: true, limits: FacebookLimits | null, message: A }
-  | { ok: false, message: FacebookError };
+  | { ok: true; limits: FacebookLimits | null; message: A }
+  | { ok: false; message: FacebookError };
 
 export interface GroupInstallWebhook {
   field: string;
   value: {
     group_id: string;
-    update_time: string;  // time of update
-    verb: string;         // type of action taken
-    actor_id: string;     // admin who installed/uninstalled app
+    update_time: string; // time of update
+    verb: string; // type of action taken
+    actor_id: string; // admin who installed/uninstalled app
   };
-};
+}
 
 export interface WebhookResponse<A> {
   entry: Array<{
@@ -201,4 +201,4 @@ export interface WebhookResponse<A> {
     uid: string;
   }>;
   object: string;
-};
+}
