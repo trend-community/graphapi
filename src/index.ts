@@ -38,7 +38,7 @@ const reactions = [
   "reactions.type(CARE).limit(0).summary(total_count).as(reactions_care)",
 ].join(",");
 
-const groupFields = [
+const groupField = [
   "id",
   "archived",
   "description",
@@ -52,6 +52,10 @@ const groupFields = [
   "picture.fields(height,width,is_silhouette,url)",
   "privacy",
   "parent",
+].join(",");
+
+const groupFields = [
+  ...groupField,
   "administrator",
 ].join(",");
 
