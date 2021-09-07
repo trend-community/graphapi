@@ -16,6 +16,12 @@ export type NodeType = "Group" | "Post";
  */
 
 export type LoginParams =
+  | { // short lived access token
+      client_id: string;
+      client_secret: string;
+      redirect_uri: string;
+      code: string;
+    }
   | {
       // user access token
       grant_type: "fb_exchange_token";
@@ -29,6 +35,11 @@ export type LoginParams =
       client_id: string;
       client_secret: string;
     };
+
+export type DebugTokenParams = {
+  input_token: string;
+  access_token: string;
+};
 
 export interface FacebookError {
   error: {
@@ -50,6 +61,21 @@ export interface FacebookLoginResult {
   access_token: string;
   token_type: string;
   expires_in?: number;
+}
+
+export interface DebugTokenResult {
+  data: {
+    app_id: string;
+    type: string;
+    application: string;
+    data_access_expires_at: number;
+    expires_at: number;
+    is_valid: boolean;
+    issued_at: number;
+    scopes: string[];
+    granular_scopes: any;
+    user_id: string;
+  };
 }
 
 export interface Group {

@@ -6,6 +6,8 @@ import url from "url";
 
 import {
   LoginParams,
+  DebugTokenParams,
+  DebugTokenResult,
   NodeType,
   FacebookLimits,
   FacebookLoginResult,
@@ -20,7 +22,7 @@ import {
 export * from "./types";
 
 // API version
-const OAUTH_VERSION = "/v5.0";
+const OAUTH_VERSION = "/v11.0";
 const VERSION = "/v10.0";
 
 // reactions
@@ -144,6 +146,13 @@ export function login(
 ): Promise<FacebookResponse<FacebookLoginResult>> {
   const path = `${OAUTH_VERSION}/oauth/access_token?${qs.stringify(params)}`;
   return graphRequest<FacebookLoginResult>(path);
+}
+
+export function debugToken(
+  params: DebugTokenParams
+): Promise<FacebookResponse<DebugTokenResult>> {
+  const path = `/debug_token?${qs.stringify(params)}`;
+  return graphRequest<DebugTokenResult>(path);
 }
 
 export class FacebookGraphAPI {

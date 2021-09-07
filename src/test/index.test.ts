@@ -1,12 +1,37 @@
 import nock from "nock";
 
-import { FacebookGraphAPI, login } from "../index";
+import { FacebookGraphAPI, login, debugToken } from "../index";
 
 beforeAll(function () {
   nock.disableNetConnect();
 });
 
-describe("facebook login", function () {
+describe("login token", function () {
+  describe("short-lived login", function () {
+    let scope: nock.Scope;
+    beforeEach(function () {
+      scope = nock("https://graph.facebook.com")
+        .get(/\/oauth\/access_token\?/)
+        .reply(200, { access_token: "", token_type: "", expires_in: 0 });
+    });
+
+    afterEach(function () {
+      nock.cleanAll();
+    });
+
+    test("should login the user with application info and user access token", async function () {
+      expect.assertions(2);
+      const result = await login({
+        client_id: "appId",
+        client_secret: "appSecret",
+        redirect_uri: 'http://example.com/auth/callback',
+        code: '1',
+      });
+      expect(result.ok).toEqual(true);
+      expect(scope.isDone()).toEqual(true);
+    });
+  });
+
   describe("user access token", function () {
     let scope: nock.Scope;
     beforeEach(function () {
@@ -57,7 +82,43 @@ describe("facebook login", function () {
   });
 });
 
-describe("facebook graph", function () {
+describe("debug token", function () {
+  let scope: nock.Scope;
+  beforeEach(function () {
+    scope = nock("https://graph.facebook.com")
+      .get(/\/debug_token\?/)
+      .reply(200, {
+        data: {
+          app_id: "",
+          type: "",
+          application: "",
+          data_access_expires_at: 0,
+          expires_at: 0,
+          is_valid: false,
+          issued_at: 0,
+          scopes: [],
+          granular_scopes: [{ "scope": "" }],
+          user_id: ""
+        }
+      });
+  });
+
+  afterEach(function () {
+    nock.cleanAll();
+  });
+
+  test("should get debug info for a token", async function () {
+    expect.assertions(2);
+    const result = await debugToken({
+      access_token: 'access_token',
+      input_token: 'input_token',
+    });
+    expect(result.ok).toEqual(true);
+    expect(scope.isDone()).toEqual(true);
+  });
+});
+
+describe("graph api", function () {
   let api: FacebookGraphAPI;
 
   beforeAll(function () {
