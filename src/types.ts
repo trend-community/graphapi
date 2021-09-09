@@ -78,6 +78,20 @@ export interface DebugTokenResult {
   };
 }
 
+export interface Profile {
+  id: string;
+  name?: string;
+  email?: string;
+  picture?: {
+    data: {
+      height: number;
+      width: number;
+      is_silhouette: boolean;
+      url: string;
+    };
+  }
+}
+
 export interface Group {
   id: string;
   archived: boolean;

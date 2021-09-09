@@ -13,6 +13,7 @@ import {
   FacebookLoginResult,
   FacebookGraphResult,
   FacebookResponse,
+  Profile,
   Group,
   Post,
   Comment,
@@ -24,6 +25,13 @@ export * from "./types";
 // API version
 const OAUTH_VERSION = "/v11.0";
 const VERSION = "/v10.0";
+
+const profileFields = [
+  "id",
+  "name",
+  "email",
+  "picture"
+].join(",");
 
 // reactions
 // NONE, LIKE, LOVE, WOW, HAHA, SAD, ANGRY, THANKFUL, PRIDE, CARE
@@ -160,6 +168,16 @@ export class FacebookGraphAPI {
     private accessToken: string // long-lived or short-lived
   ) {}
 
+  private profilePath(): string {
+    return (
+      `${VERSION}/me?` +
+      `${qs.stringify({
+        fields: profileFields,
+        access_token: this.accessToken,
+      })}`
+    );
+  }
+
   private userGroupPath(): string {
     return (
       `${VERSION}/%s?` +
@@ -213,6 +231,10 @@ export class FacebookGraphAPI {
         access_token: this.accessToken,
       })}`
     );
+  }
+
+  getUserProfile(): Promise<FacebookResponse<Profile>> {
+    return graphRequest<Profile>(this.profilePath());
   }
 
   getUserGroup(groupId: string): Promise<FacebookResponse<Group>> {
